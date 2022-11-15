@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DigitalShoppingAPI.DTOs;
+using DigitalShoppingAPI.DTOs.Criterial;
 using DigitalShoppingAPI.Entities;
 using DigitalShoppingAPI.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -72,12 +73,24 @@ namespace DigitalShoppingAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ProductDTO>>> GetAll([FromQuery] PaginationDTO paginationDTO)
+        public async Task<ActionResult<PagedResult<Product>>> GetAll([FromQuery] ProductCriterial criterial)
         {
-            var queryable = context.Products.AsQueryable();
-            await HttpContext.InsertParametersPaginationInHeader(queryable);
-            var products = await queryable.OrderBy(x => x.Title).Paginate(paginationDTO).ToListAsync();
-            var result = mapper.Map<List<ProductDTO>>(products);
+            var queryable =
+                context.Products
+                .OrderBy(a => a.Title)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(criterial.Q))
+            {
+                string q = criterial.Q
+                    .Trim().ToLower();
+
+                queryable = queryable
+                    .Where(p => p.Title.ToLower().Contains(q)
+                    || p.Description.ToLower().Contains(q));
+            }
+
+            var result = new PagedResult<Product>(queryable, criterial);
 
             return Ok(result);
         }
