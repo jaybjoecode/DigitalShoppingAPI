@@ -18,6 +18,7 @@ namespace DigitalShoppingAPI.Helpers
                 .ForMember(x => x.Cover, options => options.Ignore())
                 .ForMember(x => x.ProductPhotos, options => options.Ignore());
             CreateMap<ProductDTO, Product>().ReverseMap();
+            CreateMap<ProductPhotosDTO, ProductPhoto>().ReverseMap();
         }
     }
 }

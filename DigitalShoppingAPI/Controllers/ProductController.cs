@@ -85,12 +85,23 @@ namespace DigitalShoppingAPI.Controllers
         [HttpGet("{Id:int}")]
         public async Task<ActionResult<ProductDTO>> Get(int Id)
         {
-            var client = await context.Products.FirstOrDefaultAsync(x => x.Id == Id);
-            if (client == null)
+            var product = await context.Products.FirstOrDefaultAsync(x => x.Id == Id);
+            if (product == null)
             {
                 return NotFound();
             }
-            var result = mapper.Map<ProductDTO>(client);
+            var result = mapper.Map<ProductDTO>(product);
+            var productPhotos = context.ProductPhotos.Where(b => b.ProductId == Id).ToList();
+
+            if (productPhotos == null)
+            {
+                result.ProductPhotos = null;
+            }
+            else
+            {
+                var photosDTO = mapper.Map<List<ProductPhotosDTO>>(productPhotos);
+                result.ProductPhotos = photosDTO;
+            }
 
             return Ok(result);
         }
