@@ -138,5 +138,40 @@ namespace DigitalShoppingAPI.Controllers
 
             return Ok();
         }
+
+        [HttpPost("/photo")]
+        public async Task<ActionResult> AddPhoto([FromForm] AddPhotoDTO addPhotoDTO)
+        {
+            var product = await context.Products.FirstOrDefaultAsync(x => x.Id == addPhotoDTO.ProductId);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            var productPhoto = new ProductPhoto();
+            productPhoto.Photo = await fileStorageService.SaveFile(containerName, addPhotoDTO.Photo);
+            productPhoto.Product = product;
+            context.Add(productPhoto);
+
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpDelete("/photo/{Id:int}")]
+        public async Task<ActionResult> DeletePhoto(int Id)
+        {
+            var productPhoto = await context.ProductPhotos.FirstOrDefaultAsync(x => x.Id == Id);
+            if (productPhoto == null)
+            {
+                return NotFound();
+            }
+
+            context.Remove(productPhoto);
+            await context.SaveChangesAsync();
+            await fileStorageService.DeleteFile(productPhoto.Photo, containerName);
+
+            return Ok();
+        }
     }
 }
