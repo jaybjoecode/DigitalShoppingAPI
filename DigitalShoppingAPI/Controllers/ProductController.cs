@@ -104,7 +104,7 @@ namespace DigitalShoppingAPI.Controllers
                 return NotFound();
             }
             var result = mapper.Map<ProductDTO>(product);
-            
+
             var productPhotos = context.ProductPhotos.Where(b => b.ProductId == Id).ToList();
             if (productPhotos == null)
             {
@@ -124,6 +124,13 @@ namespace DigitalShoppingAPI.Controllers
             else
             {
                 var valorationsDTO = mapper.Map<List<ValorationDTO>>(valorations);
+                foreach (var item in valorationsDTO)
+                {
+                    var user = await userManager.FindByIdAsync(item.UserId);
+                    var profile = await context.Profiles.FirstOrDefaultAsync(x => x.UserId == item.UserId);
+                    item.Email = user.Email;
+                    item.Avatar = profile.Avatar;
+                }
                 result.valorations = valorationsDTO;
             }
 
