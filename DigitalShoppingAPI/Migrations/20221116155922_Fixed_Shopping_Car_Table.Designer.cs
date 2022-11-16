@@ -3,14 +3,16 @@ using System;
 using DigitalShoppingAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DigitalShoppingAPI.Migrations
 {
     [DbContext(typeof(DigitalShoppingDbContext))]
-    partial class DigitalShoppingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221116155922_Fixed_Shopping_Car_Table")]
+    partial class Fixed_Shopping_Car_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
