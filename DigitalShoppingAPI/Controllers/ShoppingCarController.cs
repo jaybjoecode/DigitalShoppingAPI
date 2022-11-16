@@ -40,9 +40,15 @@ namespace DigitalShoppingAPI.Controllers
 
             var shoppingcar = context.ShoppingCars.Where(x => x.UserId == userId).ToList();
 
-            //var result = mapper.Map<List<ShoppingCarDTO>>(shoppingcar);
+            var result = mapper.Map<List<ShoppingCarDTO>>(shoppingcar);
 
-            return Ok(shoppingcar);
+            foreach (var item in result)
+            {
+                var product = await context.Products.FirstOrDefaultAsync(x => x.Id == item.Product.Id);
+                item.Product = mapper.Map<ProductDTO>(product);
+            }
+
+            return Ok(result);
         }
 
         // POST api/<ShoppingCarController>
