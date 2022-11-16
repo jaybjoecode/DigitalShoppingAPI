@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DigitalShoppingAPI.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,5 +17,6 @@ namespace DigitalShoppingAPI.DTOs
         public int Rating { get; set; }
         public DateTime CreatedAt { get; set; }
         public List<ProductPhotosDTO> ProductPhotos { get; set; }
+        public List<ValorationDTO> valorations { get; set; }
     }
 }

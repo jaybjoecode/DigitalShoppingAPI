@@ -104,8 +104,8 @@ namespace DigitalShoppingAPI.Controllers
                 return NotFound();
             }
             var result = mapper.Map<ProductDTO>(product);
+            
             var productPhotos = context.ProductPhotos.Where(b => b.ProductId == Id).ToList();
-
             if (productPhotos == null)
             {
                 result.ProductPhotos = null;
@@ -114,6 +114,17 @@ namespace DigitalShoppingAPI.Controllers
             {
                 var photosDTO = mapper.Map<List<ProductPhotosDTO>>(productPhotos);
                 result.ProductPhotos = photosDTO;
+            }
+
+            var valorations = context.Valorations.Where(v => v.ProductId == Id).ToList();
+            if (valorations == null)
+            {
+                result.valorations = null;
+            }
+            else
+            {
+                var valorationsDTO = mapper.Map<List<ValorationDTO>>(valorations);
+                result.valorations = valorationsDTO;
             }
 
             return Ok(result);
