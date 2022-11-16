@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DigitalShoppingAPI.Helpers;
 using Microsoft.EntityFrameworkCore;
+using DigitalShoppingAPI.Entities;
 
 namespace DigitalShoppingAPI.Controllers
 {
@@ -48,8 +49,21 @@ namespace DigitalShoppingAPI.Controllers
             var user = new IdentityUser { UserName = userCredencials.Email, Email = userCredencials.Email };
             var result = await userManager.CreateAsync(user, userCredencials.Password);
 
+            
+
             if (result.Succeeded)
             {
+                var profile = new ProfileInfo()
+                {
+                    UserId = user.Id,
+                    Avatar = null,
+                    Name = userCredencials.Name,
+                    LastName = userCredencials.LastName
+                };
+
+                context.Add(profile);
+                await context.SaveChangesAsync();
+
                 return await BuildToken(userCredencials);
             }
             else
@@ -68,6 +82,17 @@ namespace DigitalShoppingAPI.Controllers
 
             if (result.Succeeded)
             {
+                var profile = new ProfileInfo()
+                {
+                    UserId = user.Id,
+                    Avatar = null,
+                    Name = userCredencials.Name,
+                    LastName = userCredencials.LastName
+                };
+
+                context.Add(profile);
+                await context.SaveChangesAsync();
+
                 return Ok();
             }
             else
