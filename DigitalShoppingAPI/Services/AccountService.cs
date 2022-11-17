@@ -39,5 +39,13 @@ namespace DigitalShoppingAPI.Services
             this.context = context;
             this.mapper = mapper;
         }
+
+        public async Task<List<UserDTO>> GetListUsers(PaginationDTO paginationDTO)
+        {
+            var queryable = context.Users.AsQueryable();
+            var users = await queryable.OrderBy(x => x.Email).Paginate(paginationDTO).ToListAsync();
+            var result = mapper.Map<List<UserDTO>>(users);
+            return result;
+        }
     }
 }

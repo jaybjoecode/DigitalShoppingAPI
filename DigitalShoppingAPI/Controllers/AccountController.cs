@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using DigitalShoppingAPI.Helpers;
 using Microsoft.EntityFrameworkCore;
 using DigitalShoppingAPI.Entities;
+using DigitalShoppingAPI.Services;
 
 namespace DigitalShoppingAPI.Controllers
 {
@@ -27,19 +28,18 @@ namespace DigitalShoppingAPI.Controllers
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly IConfiguration configuration;
         private readonly DigitalShoppingDbContext context;
-        private readonly IMapper mapper;
-
+        private readonly IAccountService service;
         public AccountService(UserManager<IdentityUser> userManager,
                 SignInManager<IdentityUser> signInManager,
                 IConfiguration configuration,
                 DigitalShoppingDbContext context,
-                IMapper mapper)
+                IAccountService service)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.configuration = configuration;
             this.context = context;
-            this.mapper = mapper;
+            this.service = service;
         }
 
         [HttpPost("register")]
@@ -47,9 +47,7 @@ namespace DigitalShoppingAPI.Controllers
             [FromBody] RegisterDTO userCredencials)
         {
             var user = new IdentityUser { UserName = userCredencials.Email, Email = userCredencials.Email };
-            var result = await userManager.CreateAsync(user, userCredencials.Password);
-
-            
+            var result = await userManager.CreateAsync(user, userCredencials.Password);            
 
             if (result.Succeeded)
             {
@@ -158,21 +156,20 @@ namespace DigitalShoppingAPI.Controllers
             };
         }
 
-        /*[HttpPost("logout")]
+        [HttpPost("logout")]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return Ok("logout");
-        }*/
+        }
 
         [HttpGet("list")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<List<UserDTO>>> GetListUsers([FromQuery] PaginationDTO paginationDTO)
         {
-            var queryable = context.Users.AsQueryable();
-            await HttpContext.InsertParametersPaginationInHeader(queryable);
-            var users = await queryable.OrderBy(x => x.Email).Paginate(paginationDTO).ToListAsync();
-            return mapper.Map<List<UserDTO>>(users);
+            var result = service.GetListUsers(paginationDTO);
+
+            return Ok(result);
         }
     }
 }
