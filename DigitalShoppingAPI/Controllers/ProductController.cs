@@ -3,6 +3,7 @@ using DigitalShoppingAPI.DTOs;
 using DigitalShoppingAPI.DTOs.Criterial;
 using DigitalShoppingAPI.Entities;
 using DigitalShoppingAPI.Helpers;
+using DigitalShoppingAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,23 +22,21 @@ namespace DigitalShoppingAPI.Controllers
     [Route("[controller]")]
     public class ProductController : ControllerBase
     {
-        private readonly DigitalShoppingDbContext context;
-        private readonly IMapper mapper;
-        private readonly IFileStorageService fileStorageService;
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly string containerName = "products";
-        public ProductController(DigitalShoppingDbContext context,
-            UserManager<IdentityUser> userManager,
-            IFileStorageService fileStorageSevice,
-            IMapper mapper)
+        private readonly IProductService service;
+        public ProductController(IProductService service)
         {
-            this.context = context;
-            this.userManager = userManager;
-            this.fileStorageService = fileStorageSevice;
-            this.mapper = mapper;
+            this.service = service;
         }
 
-        [HttpPost]
+        [HttpGet]
+        public async Task<ActionResult<PagedResult<Product>>> GetAll([FromQuery] ProductCriterial criterial)
+        {
+            var result = service.GetAll(criterial);
+
+            return Ok(result);
+        }
+
+        /*[HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Create([FromForm] ProductCreateDTO productDTO)
         {
@@ -71,30 +70,7 @@ namespace DigitalShoppingAPI.Controllers
 
             return Ok();
         }
-
-        [HttpGet]
-        public async Task<ActionResult<PagedResult<Product>>> GetAll([FromQuery] ProductCriterial criterial)
-        {
-            var queryable =
-                context.Products
-                .OrderBy(a => a.Title)
-                .AsQueryable();
-
-            if (!string.IsNullOrEmpty(criterial.Q))
-            {
-                string q = criterial.Q
-                    .Trim().ToLower();
-
-                queryable = queryable
-                    .Where(p => p.Title.ToLower().Contains(q)
-                    || p.Description.ToLower().Contains(q));
-            }
-
-            var result = new PagedResult<Product>(queryable, criterial);
-
-            return Ok(result);
-        }
-
+        
         [HttpGet("{Id:int}")]
         public async Task<ActionResult<ProductDTO>> Get(int Id)
         {
@@ -214,6 +190,6 @@ namespace DigitalShoppingAPI.Controllers
             await fileStorageService.DeleteFile(productPhoto.Photo, containerName);
 
             return Ok();
-        }
+        }*/
     }
 }

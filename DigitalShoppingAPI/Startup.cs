@@ -1,5 +1,6 @@
 using AutoMapper;
 using DigitalShoppingAPI.Helpers;
+using DigitalShoppingAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,6 +39,9 @@ namespace DigitalShoppingAPI
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IFileStorageService, InAppStorageService>();
             services.AddHttpContextAccessor();
+
+            services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IProductService, ProductService>();
 
             services.AddSwaggerGen(c =>
             {

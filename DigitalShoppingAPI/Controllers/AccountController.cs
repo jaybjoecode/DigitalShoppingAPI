@@ -21,7 +21,7 @@ namespace DigitalShoppingAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AccountController : ControllerBase
+    public class AccountService : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
@@ -29,7 +29,7 @@ namespace DigitalShoppingAPI.Controllers
         private readonly DigitalShoppingDbContext context;
         private readonly IMapper mapper;
 
-        public AccountController(UserManager<IdentityUser> userManager,
+        public AccountService(UserManager<IdentityUser> userManager,
                 SignInManager<IdentityUser> signInManager,
                 IConfiguration configuration,
                 DigitalShoppingDbContext context,
