@@ -21,6 +21,8 @@ namespace DigitalShoppingAPI.Helpers
             CreateMap<ProductPhotosDTO, ProductPhoto>().ReverseMap();
             CreateMap<ShoppingCarDTO, ShoppingCar>().ReverseMap();
             CreateMap<ValorationDTO, Valoration>().ReverseMap();
+            CreateMap<ProfileInfoUpdateDTO, ProfileInfo>().ReverseMap();
+            CreateMap<ProfileInfoDTO, ProfileInfo>().ReverseMap();
         }
 
         private ProductDTO MapShoppingCarProduct(Product arg)

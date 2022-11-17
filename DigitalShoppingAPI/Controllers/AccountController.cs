@@ -44,7 +44,7 @@ namespace DigitalShoppingAPI.Controllers
 
         [HttpPost("register")]
         public async Task<ActionResult<AuthenticationResponse>> Register(
-            [FromBody] UserCredencials userCredencials)
+            [FromBody] RegisterDTO userCredencials)
         {
             var user = new IdentityUser { UserName = userCredencials.Email, Email = userCredencials.Email };
             var result = await userManager.CreateAsync(user, userCredencials.Password);
@@ -64,7 +64,7 @@ namespace DigitalShoppingAPI.Controllers
                 context.Add(profile);
                 await context.SaveChangesAsync();
 
-                return await BuildToken(userCredencials);
+                return await BuildTokenFromRegister(userCredencials);
             }
             else
             {
@@ -75,7 +75,7 @@ namespace DigitalShoppingAPI.Controllers
         [HttpPost("create-by-admin")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<AuthenticationResponse>> CreateByAdmin(
-            [FromBody] UserCredencials userCredencials)
+            [FromBody] RegisterDTO userCredencials)
         {
             var user = new IdentityUser { UserName = userCredencials.Email, Email = userCredencials.Email };
             var result = await userManager.CreateAsync(user, userCredencials.Password);
@@ -107,14 +107,14 @@ namespace DigitalShoppingAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<AuthenticationResponse>> Login([FromBody] UserCredencials userCredencials)
+        public async Task<ActionResult<AuthenticationResponse>> Login([FromBody] LoginDTO logindto)
         {
-            var result = await signInManager.PasswordSignInAsync(userCredencials.Email,
-                userCredencials.Password, isPersistent: false, lockoutOnFailure: false);
+            var result = await signInManager.PasswordSignInAsync(logindto.Email,
+                logindto.Password, isPersistent: false, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
-                return await BuildToken(userCredencials);
+                return await BuildToken(logindto);
             }
             else
             {
@@ -122,7 +122,16 @@ namespace DigitalShoppingAPI.Controllers
             }
         }
 
-        private async Task<AuthenticationResponse> BuildToken(UserCredencials userCredencials)
+        private async Task<AuthenticationResponse> BuildTokenFromRegister(RegisterDTO registerdto)
+        {
+            var logindto = new LoginDTO()
+            { 
+                Email = registerdto.Email,
+                Password = registerdto.Password
+            };
+            return await BuildToken(logindto);
+        }
+        private async Task<AuthenticationResponse> BuildToken(LoginDTO userCredencials)
         {
             // data to send encrypted
             var claims = new List<Claim>()
