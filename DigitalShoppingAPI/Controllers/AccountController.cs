@@ -165,11 +165,11 @@ namespace DigitalShoppingAPI.Controllers
 
         [HttpGet("list")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<List<UserDTO>>> GetListUsers([FromQuery] PaginationDTO paginationDTO)
+        public async Task<List<UserDTO>> GetListUsers([FromQuery] PaginationDTO paginationDTO)
         {
-            var result = service.GetListUsers(paginationDTO);
+            var result = await service.GetListUsers(paginationDTO);
 
-            return Ok(result);
+            return result;
         }
     }
 }

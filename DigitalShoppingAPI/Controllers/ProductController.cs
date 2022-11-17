@@ -33,7 +33,7 @@ namespace DigitalShoppingAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<PagedResult<Product>>> GetAll([FromQuery] ProductCriterial criterial)
         {
-            var result = service.GetAll(criterial);
+            var result = await service.GetAll(criterial);
 
             return Ok(result);
         }
