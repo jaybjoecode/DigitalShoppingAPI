@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DigitalShoppingAPI.DTOs;
 using DigitalShoppingAPI.Entities;
+using DigitalShoppingAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,16 +20,12 @@ namespace DigitalShoppingAPI.Controllers
     [ApiController]
     public class ValorationController : ControllerBase
     {
-        private readonly DigitalShoppingDbContext context;
         private readonly UserManager<IdentityUser> userManager;
-        private readonly IMapper mapper;
-        public ValorationController(DigitalShoppingDbContext context,
-            UserManager<IdentityUser> userManager,
-            IMapper mapper)
+        private readonly ValorationService service;
+        public ValorationController(UserManager<IdentityUser> userManager, ValorationService service)
         {
-            this.context = context;
             this.userManager = userManager;
-            this.mapper = mapper;
+            this.service = service;
         }
 
         [HttpPost]
@@ -39,32 +36,7 @@ namespace DigitalShoppingAPI.Controllers
             var user = await userManager.FindByEmailAsync(email);
             var userId = user.Id;
 
-            var shoppingCar = new Valoration()
-            {
-                UserId = userId,
-                ProductId = dto.ProductId,
-                Comment = dto.Comment,
-                Rating = dto.Rating,
-                CreatedAt = DateTime.Now,
-            };
-
-            context.Add(shoppingCar);
-
-            var product = await context.Products.FirstOrDefaultAsync(x => x.Id == dto.ProductId);
-            var profile = await context.Profiles.FirstOrDefaultAsync(x => x.UserId == product.UserId);
-
-            product.Rating = (product.Rating > 0)
-                ? (int)(product.Rating + dto.Rating) / 2
-                : dto.Rating;
-            context.Entry(product).State = EntityState.Modified;
-
-            profile.Rating = (profile.Rating > 0)
-                ? (int)(profile.Rating + product.Rating) / 2
-                : product.Rating;
-
-            context.Entry(profile).State = EntityState.Modified;
-
-            await context.SaveChangesAsync();
+            await service.Post(dto, userId);
 
             return Ok();
         }
