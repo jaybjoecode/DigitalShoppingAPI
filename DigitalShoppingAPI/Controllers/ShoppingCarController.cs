@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DigitalShoppingAPI.DTOs;
 using DigitalShoppingAPI.Entities;
+using DigitalShoppingAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,35 +19,24 @@ namespace DigitalShoppingAPI.Controllers
     [ApiController]
     public class ShoppingCarController : ControllerBase
     {
-        private readonly DigitalShoppingDbContext context;
         private readonly UserManager<IdentityUser> userManager;
-        private readonly IMapper mapper;
-
-        public ShoppingCarController(DigitalShoppingDbContext context,
-            UserManager<IdentityUser> userManager,
-            IMapper mapper)
+        private readonly IShoppingCarService service;
+        public ShoppingCarController(UserManager<IdentityUser> userManager,
+            IShoppingCarService service)
         {
-            this.context = context;
             this.userManager = userManager;
-            this.mapper = mapper;
+            this.service = service;
         }
+        
         [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult<List<ShoppingCar>>> Get()
+        public async Task<ActionResult<List<ShoppingCarDTO>>> Get()
         {
             var email = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
             var user = await userManager.FindByEmailAsync(email);
             var userId = user.Id;
 
-            var shoppingcar = context.ShoppingCars.Where(x => x.UserId == userId).ToList();
-
-            var result = mapper.Map<List<ShoppingCarDTO>>(shoppingcar);
-
-            foreach (var item in result)
-            {
-                var product = await context.Products.FirstOrDefaultAsync(x => x.Id == item.Product.Id);
-                item.Product = mapper.Map<ProductDTO>(product);
-            }
+            var result = await service.Get(userId);
 
             return Ok(result);
         }
@@ -60,13 +50,7 @@ namespace DigitalShoppingAPI.Controllers
             var user = await userManager.FindByEmailAsync(email);
             var userId = user.Id;
 
-            var shoppingCar = new ShoppingCar();
-            shoppingCar.UserId = userId;
-            shoppingCar.ProductId = ProductId;
-
-            context.Add(shoppingCar);
-
-            await context.SaveChangesAsync();
+            await service.Post(ProductId, userId);
 
             return Ok();
         }
@@ -76,14 +60,7 @@ namespace DigitalShoppingAPI.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Delete(int Id)
         {
-            var shoppingCar = await context.ShoppingCars.FirstOrDefaultAsync(x => x.Id == Id);
-            if (shoppingCar == null)
-            {
-                return NotFound();
-            }
-
-            context.Remove(shoppingCar);
-            await context.SaveChangesAsync();
+            await service.Delete(Id);
 
             return Ok();
         }

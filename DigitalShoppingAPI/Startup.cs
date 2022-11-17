@@ -44,6 +44,7 @@ namespace DigitalShoppingAPI
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IValorationService, ValorationService>();
+            services.AddTransient<IShoppingCarService, ShoppingCarService>();
 
             services.AddSwaggerGen(c =>
             {
