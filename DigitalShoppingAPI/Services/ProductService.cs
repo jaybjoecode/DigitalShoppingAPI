@@ -82,46 +82,45 @@ namespace DigitalShoppingAPI.Services
         public async Task<ProductDTO> Get(int Id)
         {
             var product = await context.Products.FirstOrDefaultAsync(x => x.Id == Id);
-            if (product != null)
+
+
+            if(product == null)
             {
-                var result = mapper.Map<ProductDTO>(product);
+                throw new NotImplementedException();
+            }
 
-                var productPhotos = context.ProductPhotos.Where(b => b.ProductId == Id).ToList();
-                if (productPhotos == null)
-                {
-                    result.ProductPhotos = null;
-                }
-                else
-                {
-                    var photosDTO = mapper.Map<List<ProductPhotosDTO>>(productPhotos);
-                    result.ProductPhotos = photosDTO;
-                }
+            var result = mapper.Map<ProductDTO>(product);
 
-                var valorations = context.Valorations.Where(v => v.ProductId == Id).ToList();
-                if (valorations == null)
-                {
-                    result.valorations = null;
-                }
-                else
-                {
-                    var valorationsDTO = mapper.Map<List<ValorationDTO>>(valorations);
-                    foreach (var item in valorationsDTO)
-                    {
-                        var user = await userManager.FindByIdAsync(item.UserId);
-                        var profile = await context.Profiles.FirstOrDefaultAsync(x => x.UserId == item.UserId);
-                        item.Email = user.Email;
-                        item.Avatar = profile.Avatar;
-                    }
-                    result.valorations = valorationsDTO;
-                }
-
-                return result;
+            var productPhotos = context.ProductPhotos.Where(b => b.ProductId == Id).ToList();
+            if (productPhotos == null)
+            {
+                result.ProductPhotos = null;
             }
             else
             {
-                // return new NotFoundResult();
-                return null;
+                var photosDTO = mapper.Map<List<ProductPhotosDTO>>(productPhotos);
+                result.ProductPhotos = photosDTO;
             }
+
+            var valorations = context.Valorations.Where(v => v.ProductId == Id).ToList();
+            if (valorations == null)
+            {
+                result.valorations = null;
+            }
+            else
+            {
+                var valorationsDTO = mapper.Map<List<ValorationDTO>>(valorations);
+                foreach (var item in valorationsDTO)
+                {
+                    var user = await userManager.FindByIdAsync(item.UserId);
+                    var profile = await context.Profiles.FirstOrDefaultAsync(x => x.UserId == item.UserId);
+                    item.Email = user.Email;
+                    item.Avatar = profile.Avatar;
+                }
+                result.valorations = valorationsDTO;
+            }
+
+            return result;
         }
 
         public async Task Edit(int Id, [FromForm] ProductCreateDTO dto)
@@ -142,58 +141,55 @@ namespace DigitalShoppingAPI.Services
         public async Task Delete(int Id)
         {
             var product = await context.Products.FirstOrDefaultAsync(x => x.Id == Id);
-            
-            if (product != null)
-            {
-                var productPhotos = context.ProductPhotos.Where(b => b.ProductId == Id).ToList();
 
-                if (productPhotos != null)
-                {
-                    foreach (var photo in productPhotos)
-                    {
-                        await fileStorageService.DeleteFile(photo.Photo, containerName);
-                    }
-                }
-                context.Remove(product);
-                await context.SaveChangesAsync();
-                await fileStorageService.DeleteFile(product.Cover, containerName);
-            }
-            /*else (product == null)
+            if (product == null)
             {
-                return new NotFoundResult();
-            }*/
+                throw new NotImplementedException();
+            }
+
+            var productPhotos = context.ProductPhotos.Where(b => b.ProductId == Id).ToList();
+
+            if (productPhotos != null)
+            {
+                foreach (var photo in productPhotos)
+                {
+                    await fileStorageService.DeleteFile(photo.Photo, containerName);
+                }
+            }
+            context.Remove(product);
+            await context.SaveChangesAsync();
+            await fileStorageService.DeleteFile(product.Cover, containerName);
+
         }
 
         public async Task AddPhoto(AddPhotoDTO addPhotoDTO)
         {
             var product = await context.Products.FirstOrDefaultAsync(x => x.Id == addPhotoDTO.ProductId);
-            if (product != null)
+            
+            if (product == null)
             {
-                var productPhoto = new ProductPhoto();
-                productPhoto.Photo = await fileStorageService.SaveFile(containerName, addPhotoDTO.Photo);
-                productPhoto.Product = product;
-                context.Add(productPhoto);
-                await context.SaveChangesAsync();
+                throw new NotImplementedException();
             }
-            /*if (product == null)
-            {
-                return new NotFoundResult();
-            }*/            
+
+            var productPhoto = new ProductPhoto();
+            productPhoto.Photo = await fileStorageService.SaveFile(containerName, addPhotoDTO.Photo);
+            productPhoto.Product = product;
+            context.Add(productPhoto);
+            await context.SaveChangesAsync();
         }
 
         public async Task DeletePhoto(int Id)
         {
             var productPhoto = await context.ProductPhotos.FirstOrDefaultAsync(x => x.Id == Id);
-            if (productPhoto != null)
+            
+            if (productPhoto == null)
             {
-                context.Remove(productPhoto);
-                await context.SaveChangesAsync();
-                await fileStorageService.DeleteFile(productPhoto.Photo, containerName);
+                throw new NotImplementedException();
             }
-            /*if (productPhoto == null)
-            {
-                return new NotFoundResult();
-            }*/
+            
+            context.Remove(productPhoto);
+            await context.SaveChangesAsync();
+            await fileStorageService.DeleteFile(productPhoto.Photo, containerName);
         }
     }
 }
