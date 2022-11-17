@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DigitalShoppingAPI.Services
 {
-    public class ProfilesService : IProfileService
+    public class ProfileService : IProfileService
     {
         private readonly DigitalShoppingDbContext context;
         private readonly IMapper mapper;
@@ -19,7 +19,7 @@ namespace DigitalShoppingAPI.Services
         private readonly UserManager<IdentityUser> userManager;
         private readonly string containerName = "profiles";
 
-        public ProfilesService(DigitalShoppingDbContext context, 
+        public ProfileService(DigitalShoppingDbContext context, 
             IMapper mapper, 
             IFileStorageService fileStorageService,
             UserManager<IdentityUser> userManager)
