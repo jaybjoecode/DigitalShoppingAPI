@@ -21,21 +21,11 @@ namespace DigitalShoppingAPI.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly SignInManager<IdentityUser> signInManager;
-        private readonly IConfiguration configuration;
         private readonly DigitalShoppingDbContext context;
         private readonly IMapper mapper;
 
-        public AccountService(UserManager<IdentityUser> userManager,
-                SignInManager<IdentityUser> signInManager,
-                IConfiguration configuration,
-                DigitalShoppingDbContext context,
-                IMapper mapper)
+        public AccountService(DigitalShoppingDbContext context, IMapper mapper)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
-            this.configuration = configuration;
             this.context = context;
             this.mapper = mapper;
         }
