@@ -16,8 +16,8 @@ using System.Threading.Tasks;
 
 namespace DigitalShoppingAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ValorationController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;

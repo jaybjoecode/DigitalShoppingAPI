@@ -21,15 +21,15 @@ using DigitalShoppingAPI.Services;
 namespace DigitalShoppingAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class AccountService : ControllerBase
+    [Route("api/[controller]")]
+    public class AccountController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly IConfiguration configuration;
         private readonly DigitalShoppingDbContext context;
         private readonly IAccountService service;
-        public AccountService(UserManager<IdentityUser> userManager,
+        public AccountController(UserManager<IdentityUser> userManager,
                 SignInManager<IdentityUser> signInManager,
                 IConfiguration configuration,
                 DigitalShoppingDbContext context,

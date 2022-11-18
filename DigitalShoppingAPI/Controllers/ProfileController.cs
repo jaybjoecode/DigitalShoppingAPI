@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace DigitalShoppingAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ProfileController : ControllerBase
     {
         private readonly IProfileService service;

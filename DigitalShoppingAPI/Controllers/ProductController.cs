@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace DigitalShoppingAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
         private readonly IProductService service;
@@ -76,7 +76,7 @@ namespace DigitalShoppingAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("/photo")]
+        [HttpPost("photo")]
         public async Task<ActionResult> AddPhoto([FromForm] AddPhotoDTO addPhotoDTO)
         {
             await service.AddPhoto(addPhotoDTO);
@@ -84,7 +84,7 @@ namespace DigitalShoppingAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("/photo/{Id:int}")]
+        [HttpDelete("photo/{Id:int}")]
         public async Task<ActionResult> DeletePhoto(int Id)
         {
             await service.DeletePhoto(Id);
@@ -92,7 +92,7 @@ namespace DigitalShoppingAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("/test/{Id:int}")]
+        [HttpPost("test/{Id:int}")]
         public async Task<ActionResult<Product>> TestGetOneGR(int Id)
         {
             var result = await service.TestGetOneGR(Id);
