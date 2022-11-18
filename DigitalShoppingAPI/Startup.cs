@@ -36,6 +36,15 @@ namespace DigitalShoppingAPI
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    var AllowedHosts = Configuration.GetValue<string>("AllowedHosts");
+                    builder.WithOrigins(AllowedHosts).AllowAnyMethod().AllowAnyHeader();
+                });
+            });
+
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IFileStorageService, InAppStorageService>();
@@ -122,6 +131,8 @@ namespace DigitalShoppingAPI
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DigitalShoppingAPI v1"));
             }
+
+            app.UseCors();
 
             app.UseHttpsRedirection();
 
