@@ -3,6 +3,7 @@ using DigitalShoppingAPI.DTOs;
 using DigitalShoppingAPI.DTOs.Criterial;
 using DigitalShoppingAPI.Entities;
 using DigitalShoppingAPI.Helpers;
+using DigitalShoppingAPI.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,15 +21,18 @@ namespace DigitalShoppingAPI.Services
         private readonly IFileStorageService fileStorageService;
         private readonly UserManager<IdentityUser> userManager;
         private readonly string containerName = "products";
+        private readonly IUnitOfWork _uow;
         public ProductService(DigitalShoppingDbContext context,
             UserManager<IdentityUser> userManager,
             IFileStorageService fileStorageSevice,
-            IMapper mapper)
+            IMapper mapper,
+            IUnitOfWork uow)
         {
             this.context = context;
             this.userManager = userManager;
             this.fileStorageService = fileStorageSevice;
             this.mapper = mapper;
+            this._uow = uow;
         }
 
         public Task<PagedResult<Product>> GetAll(ProductCriterial criterial)
@@ -190,6 +194,17 @@ namespace DigitalShoppingAPI.Services
             context.Remove(productPhoto);
             await context.SaveChangesAsync();
             await fileStorageService.DeleteFile(productPhoto.Photo, containerName);
+        }
+
+        public async Task<Product> TestGetOneGR(int Id)
+        {
+            var user = await _uow.ProductRepository.GetAsync(Id);
+            if (user == null)
+            {
+                throw new NotImplementedException();
+            }
+
+            return user;
         }
     }
 }

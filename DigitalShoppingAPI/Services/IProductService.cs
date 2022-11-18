@@ -18,6 +18,7 @@ namespace DigitalShoppingAPI.Services
         Task Edit(int Id, ProductCreateDTO dto);
         Task Delete(int Id);
         Task AddPhoto(AddPhotoDTO addPhotoDTO);
-        Task DeletePhoto(int Id);        
+        Task DeletePhoto(int Id);
+        Task<Product> TestGetOneGR(int Id);
     }
 }

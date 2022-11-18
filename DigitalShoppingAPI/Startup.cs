@@ -1,5 +1,6 @@
 using AutoMapper;
 using DigitalShoppingAPI.Helpers;
+using DigitalShoppingAPI.Repository;
 using DigitalShoppingAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +40,9 @@ namespace DigitalShoppingAPI
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IFileStorageService, InAppStorageService>();
             services.AddHttpContextAccessor();
+
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IProductService, ProductService>();

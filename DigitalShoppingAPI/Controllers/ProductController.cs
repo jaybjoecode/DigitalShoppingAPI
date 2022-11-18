@@ -91,5 +91,13 @@ namespace DigitalShoppingAPI.Controllers
 
             return Ok();
         }
+
+        [HttpPost("/test/{Id:int}")]
+        public async Task<ActionResult<Product>> TestGetOneGR(int Id)
+        {
+            var result = await service.TestGetOneGR(Id);
+
+            return result;
+        }
     }
 }
